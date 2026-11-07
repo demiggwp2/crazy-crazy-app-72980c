@@ -1,0 +1,9 @@
+body {
+  background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button {
+  transition: all 0.2s ease-in-out;
+}

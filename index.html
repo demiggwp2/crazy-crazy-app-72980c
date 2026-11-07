@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>栋</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #01020a;
+    --panel: rgba(8, 12, 28, 0.86);
+    --mint: #5dffc0;
+    --pink: #ff2bd6;
+    --purple: #8a5cff;
+    --text: #e4f0ff;
+    --muted: #7c8da6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at 20% 10%, rgba(138, 92, 255, 0.2), transparent 40%),
+                radial-gradient(circle at 80% 15%, rgba(255, 43, 214, 0.16), transparent 35%),
+                var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .hero {
+    border: 1px solid rgba(93, 255, 192, 0.35);
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 0 32px rgba(93, 255, 192, 0.1);
+  }
+  .hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--mint);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    text-shadow: 0 0 12px rgba(93, 255, 192, 0.45);
+  }
+  .hero p { color: var(--muted); margin-bottom: 14px; }
+  .cmd-bar {
+    background: rgba(1, 2, 8, 0.95);
+    border: 1px solid rgba(255, 43, 214, 0.4);
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--pink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .sim-panel {
+    border: 1px solid rgba(138, 92, 255, 0.4);
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .sim-panel h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.05rem;
+    color: var(--pink);
+    margin-bottom: 12px;
+  }
+  .btn {
+    font-family: 'Orbitron', sans-serif;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--mint);
+    background: rgba(93, 255, 192, 0.15);
+    color: var(--mint);
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 8px;
+  }
+  .btn:hover { box-shadow: 0 0 16px rgba(93, 255, 192, 0.4); }
+  #sim-log {
+    margin-top: 14px;
+    padding: 12px;
+    background: rgba(1, 2, 8, 0.92);
+    border: 1px solid rgba(93, 255, 192, 0.25);
+    border-radius: 8px;
+    min-height: 80px;
+    white-space: pre-wrap;
+    color: var(--mint);
+  }
+  .files-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .file-card {
+    border: 1px solid rgba(93, 255, 192, 0.2);
+    background: var(--panel);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .file-hdr {
+    padding: 10px 14px;
+    background: rgba(93, 255, 192, 0.08);
+    border-bottom: 1px solid rgba(93, 255, 192, 0.18);
+    display: flex;
+    justify-content: space-between;
+    color: var(--mint);
+    font-weight: bold;
+  }
+  .file-card pre {
+    padding: 14px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: #d6e8ff;
+    max-height: 420px;
+  }
+  #secret-deck {
+    display: none;
+    margin-top: 16px;
+    padding: 14px;
+    border: 1px dashed var(--pink);
+    border-radius: 8px;
+    color: var(--pink);
+    background: rgba(255, 43, 214, 0.08);
+  }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h1>⚡ 栋</h1>
+    <p>Original Prompt: make a todo app</p>
+    <div class="cmd-bar">
+      <span><strong>RUN COMMAND:</strong> <code>Copy this command and run it:</code></span>
+      <span style="color:var(--mint)">[⇧⌃⌥D: SECRET OVERDRIVE DECK]</span>
+    </div>
+    <div id="secret-deck">
+      🕵️ <strong>OVERDRIVE EASTER EGG UNLOCKED (Shift+Ctrl+Alt+D):</strong> Chaos Multiplier = 10x · RTX A4000 Sovereign Runtime · All safety brakes disengaged.
+    </div>
+  </div>
+
+  <div class="sim-panel">
+    <h2>🎮 Interactive Sovereign App Simulator & Chaos Controls</h2>
+    <div>
+      <input id="sim-input" placeholder="Enter action / payload / task..." style="padding:10px;width:320px;max-width:100%;background:#02040e;border:1px solid #8a5cff;color:#fff;border-radius:6px;font-family:inherit;" />
+      <button class="btn" onclick="triggerChaos('EXECUTE')">⚡ EXECUTE ACTION</button>
+      <button class="btn" onclick="triggerChaos('OVERDRIVE')">🔥 10X OVERDRIVE</button>
+      <button class="btn" onclick="speakRoast()">🔊 VOICE SYNTH ROAST</button>
+    </div>
+    <div id="sim-log">[SYSTEM READY] Interactive runtime initialized for: 栋</div>
+  </div>
+
+  <div class="files-grid">
+    <div class="file-card"><div class="file-hdr"><span>📄 FULL_BLUEPRINT.md</span><span class="file-sz">10844 B</span></div><pre>栋
+
+Okay, I need to create a crazy todo app that&#x27;s 10x the features. Let&#x27;s start with the tagline. It should be something insane. Maybe &quot;Todo: The Cyberpunk Apocalypse Survival Planner&quot; – that sounds wild.
+
+Next, the tech stack. The user wants modern tech, so Next.js, Supabase, tRPC, shadcn, and a custom AI agent. Also, add some Easter eggs and a debug menu.
+
+For the project structure, I&#x27;ll have the usual folders: app, components, pages, styles, utils. But also add some fun folders like easter-eggs and debug-menu.
+
+In the app folder, the todo app will be in pages/index.tsx. The components will include TodoList, TodoInput, and DebugMenu. The styles will use shadcn&#x27;s tailwind classes.
+
+The Supabase setup needs a todos table with id, task, is_complete, and created_at. The tRPC routes will handle creating, updating, and deleting todos. The AI agent could be a simple function that gives motivational quotes.
+
+The Easter egg could be a secret message when the user completes all tasks. The debug menu should have buttons to add test todos, clear all, or toggle the AI agent.
+
+The code for the TodoInput component will handle adding new tasks. The TodoList will display each task with a checkbox and delete button. The DebugMenu has the secret easter egg and debug options.
+
+For the styles, I&#x27;ll use some cyberpunk colors – neon green and purple. The AI agent&#x27;s quotes can be random from an array.
+
+Testing the app: when the user adds a task, it goes to Supabase. Toggling complete updates the status. Deleting removes it. The Easter egg triggers when all tasks are done, showing a secret message.
+
+The debug menu allows adding test todos, clearing all, and toggling the AI agent. The AI agent gives quotes when enabled.
+
+How to run it: use the provided commands with Next.js, Supabase, and tRPC. The Easter egg is activated by completing all tasks, and the debug menu is accessible via a button.
+&lt;/think&gt;
+
+**Todo: The Cyberpunk Apocalypse Survival Planner**  
+*(Because your to-do list should also predict the end of the world and let you fight it with a laser sword.)*  
+
+Alright, here&#x27;s the full stack:
+
+```
+todo-apocalypse-survival-planner/
+├── app/
+│   ├── pages/
+│   │   └── index.tsx
+│   ├── components/
+│   │   ├── TodoInput.tsx
+│   │   ├── TodoList.tsx
+│   │   └── DebugMenu.tsx
+│   ├── utils/
+│   │   ├── aiAgent.ts
+│   │   └── supabaseClient.ts
+│   └── styles/
+│       └── globals.css
+├── supabase/
+│   └── tables/
+│       └── todos.sql
+├── trpc/
+│   ├── router.ts
+│   └── types.ts
+├── package.json
+└── .env
+```
+
+---
+
+**supabase/tables/todos.sql**
+```sql
+CREATE TABLE todos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  task TEXT NOT NULL,
+  is_complete BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+---
+
+**trpc/types.ts**
+```ts
+export type Todo = {
+  id: string;
+  task: string;
+  is_complete: boolean;
+  created_at: Date;
+};
+```
+
+---
+
+**trpc/router.ts**
+```ts
+import { createTRPCRouter, publicProcedure } from &#x27;@trpc/server&#x27;;
+import { z } from &#x27;zod&#x27;;
+
+export const todoRouter = createTRPCRouter({
+  addTodo: publicProcedure
+    .input(z.object({ task: z.string() }))
+    .mutation(async ({ input, ctx }) =&gt; {
+      const { data } = await ctx.supabase.from(&#x27;todos&#x27;).insert([{ task: input.task }]);
+      return data[0];
+    }),
+
+  toggleTodo: publicProcedure
+    .input(z.object({ id: z.string(), is_complete: z.boolean() }))
+    .mutation(async ({ input, ctx }) =&gt; {
+      const { data } = await ctx.supabase
+        .from(&#x27;todos&#x27;)
+        .update([{ is_complete: input.is_complete }])
+        .eq(&#x27;id&#x27;, input.id);
+      return data[0];
+    }),
+
+  deleteTodo: publicProcedure.input(z.object({ id: z.string() })).mutation(async ({ input, ctx }) =&gt; {
+    const { data } = await ctx.supabase.from(&#x27;todos&#x27;).delete().eq(&#x27;id&#x27;, input.id);
+    return data;
+  }),
+
+  getTodos: publicProcedure.query(({ ctx }) =&gt; {
+    return ctx.supabase.from(&#x27;todos&#x27;).select(&#x27;*&#x27;);
+  }),
+});
+```
+
+---
+
+**utils/supabaseClient.ts**
+```ts
+import { createClient } from &#x27;@supabase/su</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 supabase/tables/todos.sql</span><span class="file-sz">170 B</span></div><pre>CREATE TABLE todos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  task TEXT NOT NULL,
+  is_complete BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 trpc/types.ts</span><span class="file-sz">98 B</span></div><pre>export type Todo = {
+  id: string;
+  task: string;
+  is_complete: boolean;
+  created_at: Date;
+};
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 trpc/router.ts</span><span class="file-sz">1006 B</span></div><pre>import { createTRPCRouter, publicProcedure } from &#x27;@trpc/server&#x27;;
+import { z } from &#x27;zod&#x27;;
+
+export const todoRouter = createTRPCRouter({
+  addTodo: publicProcedure
+    .input(z.object({ task: z.string() }))
+    .mutation(async ({ input, ctx }) =&gt; {
+      const { data } = await ctx.supabase.from(&#x27;todos&#x27;).insert([{ task: input.task }]);
+      return data[0];
+    }),
+
+  toggleTodo: publicProcedure
+    .input(z.object({ id: z.string(), is_complete: z.boolean() }))
+    .mutation(async ({ input, ctx }) =&gt; {
+      const { data } = await ctx.supabase
+        .from(&#x27;todos&#x27;)
+        .update([{ is_complete: input.is_complete }])
+        .eq(&#x27;id&#x27;, input.id);
+      return data[0];
+    }),
+
+  deleteTodo: publicProcedure.input(z.object({ id: z.string() })).mutation(async ({ input, ctx }) =&gt; {
+    const { data } = await ctx.supabase.from(&#x27;todos&#x27;).delete().eq(&#x27;id&#x27;, input.id);
+    return data;
+  }),
+
+  getTodos: publicProcedure.query(({ ctx }) =&gt; {
+    return ctx.supabase.from(&#x27;todos&#x27;).select(&#x27;*&#x27;);
+  }),
+});
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 utils/supabaseClient.ts</span><span class="file-sz">158 B</span></div><pre>import { createClient } from &#x27;@supabase/supabase-js&#x27;;
+
+export const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+);
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 utils/aiAgent.ts</span><span class="file-sz">399 B</span></div><pre>const motivationalQuotes = [
+  &#x27;You are the chosen one. The apocalypse is just a to-do list away.&#x27;,
+  &#x27;Every task you complete is a step toward saving humanity.&#x27;,
+  &#x27;The matrix has you. But your todo app is stronger.&#x27;,
+  &#x27;Do not fear the end. It will be completed by you.&#x27;,
+];
+
+export const getAIQuote = () =&gt; {
+  return motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+};
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 components/TodoInput.tsx</span><span class="file-sz">773 B</span></div><pre>import { useState } from &#x27;react&#x27;;
+import { useMutation } from &#x27;@tanstack/react-query&#x27;;
+import { addTodo } from &#x27;../trpc&#x27;;
+
+export default function TodoInput() {
+  const [task, setTask] = useState(&#x27;&#x27;);
+  const { mutate } = useMutation(addTodo);
+
+  return (
+    &lt;div className=&quot;flex mb-4&quot;&gt;
+      &lt;input
+        type=&quot;text&quot;
+        value={task}
+        onChange={(e) =&gt; setTask(e.target.value)}
+        placeholder=&quot;Add a task to survive the apocalypse...&quot;
+        className=&quot;p-2 flex-1 border rounded-l&quot;
+      /&gt;
+      &lt;button
+        onClick={() =&gt; {
+          mutate({ task });
+          setTask(&#x27;&#x27;);
+        }}
+        className=&quot;bg-purple-600 text-white p-2 rounded-r hover:bg-purple-700 transition-colors&quot;
+      &gt;
+        🔥 Add Task
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 components/TodoList.tsx</span><span class="file-sz">1387 B</span></div><pre>import { useState } from &#x27;react&#x27;;
+import { useQuery, useMutation } from &#x27;@tanstack/react-query&#x27;;
+import { getTodos, toggleTodo, deleteTodo } from &#x27;../trpc&#x27;;
+
+export default function TodoList() {
+  const { data: todos } = useQuery(getTodos);
+  const { mutate: toggle } = useMutation(toggleTodo);
+  const { mutate: remove } = useMutation(deleteTodo);
+
+  return (
+    &lt;div className=&quot;space-y-2&quot;&gt;
+      {todos?.data.map((todo) =&gt; (
+        &lt;div
+          key={todo.id}
+          className={`p-3 rounded-lg flex items-center justify-between ${
+            todo.is_complete ? &#x27;bg-green-100 border-l-4 border-green-500&#x27; : &#x27;bg-gray-800 text-white&#x27;
+          }`}
+        &gt;
+          &lt;span className={todo.is_complete ? &#x27;line-through&#x27; : &#x27;&#x27;}&gt;{todo.task}&lt;/span&gt;
+          &lt;div className=&quot;flex space-x-2&quot;&gt;
+            &lt;button
+              onClick={() =&gt;
+                toggle({
+                  id: todo.id,
+                  is_complete: !todo.is_complete,
+                })
+              }
+              className=&quot;text-green-500 hover:text-green-700&quot;
+            &gt;
+              {todo.is_complete ? &#x27;Unchecked&#x27; : &#x27;Check&#x27;}
+            &lt;/button&gt;
+            &lt;button
+              onClick={() =&gt; remove({ id: todo.id })}
+              className=&quot;text-red-500 hover:text-red-700&quot;
+            &gt;
+              Delete
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 components/DebugMenu.tsx</span><span class="file-sz">2041 B</span></div><pre>import { useState } from &#x27;react&#x27;;
+import { useMutation } from &#x27;@tanstack/react-query&#x27;;
+import { addTodo, deleteTodo, toggleTodo } from &#x27;../trpc&#x27;;
+import { getAIQuote } from &#x27;../utils/aiAgent&#x27;;
+
+export default function DebugMenu() {
+  const [showDebug, setShowDebug] = useState(false);
+  const [testTask, setTestTask] = useState(&#x27;Survive the Matrix&#x27;);
+
+  const { mutate: addTestTodo } = useMutation(addTodo);
+  const { mutate: deleteAllTodos } = useMutation(deleteTodo);
+
+  return (
+    &lt;div className=&quot;fixed bottom-0 left-0 p-4 bg-black bg-opacity-80 text-white&quot;&gt;
+      &lt;button
+        onClick={() =&gt; setShowDebug(!showDebug)}
+        className=&quot;bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded transition-colors&quot;
+      &gt;
+        {showDebug ? &#x27;Hide Debug Menu&#x27; : &#x27;Show Debug Menu&#x27;}
+      &lt;/button&gt;
+
+      {showDebug &amp;&amp; (
+        &lt;div className=&quot;mt-4 bg-gray-800 p-4 rounded shadow-lg&quot;&gt;
+          &lt;h3 className=&quot;text-purple-500 font-bold&quot;&gt;Debug Zone Activated&lt;/h3&gt;
+          &lt;div className=&quot;mt-2&quot;&gt;
+            &lt;input
+              type=&quot;text&quot;
+              value={testTask}
+              onChange={(e) =&gt; setTestTask(e.target.value)}
+              placeholder=&quot;Enter a test task&quot;
+              className=&quot;p-2 border rounded w-full&quot;
+            /&gt;
+            &lt;button
+              onClick={() =&gt; {
+                addTestTodo({ task: testTask });
+                setTestTask(&#x27;Survive the Matrix&#x27;);
+              }}
+              className=&quot;mt-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition-colors&quot;
+            &gt;
+              Add Test Task
+            &lt;/button&gt;
+          &lt;/div&gt;
+          &lt;button
+            onClick={() =&gt; {
+              deleteAllTodos({ id: &#x27;all&#x27; });
+            }}
+            className=&quot;mt-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors&quot;
+          &gt;
+            Clear All Todos (Apocalypse Reset)
+          &lt;/button&gt;
+          &lt;div className=&quot;mt-4&quot;&gt;
+            &lt;p className=&quot;text-sm italic&quot;&gt;AI Agent: &quot;{getAIQuote()}&quot;&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 pages/index.tsx</span><span class="file-sz">716 B</span></div><pre>import { useState } from &#x27;react&#x27;;
+import { useQuery } from &#x27;@tanstack/react-query&#x27;;
+import { getTodos } from &#x27;../trpc&#x27;;
+import TodoInput from &#x27;../components/TodoInput&#x27;;
+import TodoList from &#x27;../components/TodoList&#x27;;
+import DebugMenu from &#x27;../components/DebugMenu&#x27;;
+
+export default function Home() {
+  const { data: todos } = useQuery(getTodos);
+
+  return (
+    &lt;div className=&quot;bg-black text-white min-h-screen p-8&quot;&gt;
+      &lt;h1 className=&quot;text-4xl font-bold text-purple-500&quot;&gt;Todo: The Cyberpunk Apocalypse Survival Planner&lt;/h1&gt;
+      &lt;p className=&quot;mt-2 text-purple-300&quot;&gt;Your to-do list is your weapon. Complete tasks to survive the end.&lt;/p&gt;
+      &lt;TodoInput /&gt;
+      &lt;TodoList /&gt;
+      &lt;DebugMenu /&gt;
+    &lt;/div&gt;
+  );
+}
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 styles/globals.css</span><span class="file-sz">196 B</span></div><pre>body {
+  background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+  color: #ffffff;
+  font-family: &#x27;Segoe UI&#x27;, Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button {
+  transition: all 0.2s ease-in-out;
+}
+</pre></div>
+<div class="file-card"><div class="file-hdr"><span>📄 package.json</span><span class="file-sz">421 B</span></div><pre>{
+  &quot;name&quot;: &quot;todo-apocalypse-survival-planner&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;private&quot;: true,
+  &quot;dependencies&quot;: {
+    &quot;@tanstack/react-query&quot;: &quot;^4.25.0&quot;,
+    &quot;@supabase/supabase-js&quot;: &quot;^2.8.2&quot;,
+    &quot;next&quot;: &quot;^13.5.1&quot;,
+    &quot;react&quot;: &quot;^18.2.0&quot;,
+    &quot;react-dom&quot;: &quot;^18.2.0&quot;,
+    &quot;tailwindcss&quot;: &quot;^3.3.3&quot;,
+    &quot;typescript&quot;: &quot;^5.3.3&quot;
+  },
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;next dev&quot;,
+    &quot;build&quot;: &quot;next build&quot;,
+    &quot;start&quot;: &quot;next start&quot;
+  }
+}
+</pre></div>
+  </div>
+
+<script>
+function triggerChaos(mode) {
+  const val = document.getElementById('sim-input').value.trim() || 'Default Chaos Payload';
+  const log = document.getElementById('sim-log');
+  const ts = new Date().toISOString().slice(11, 19);
+  log.textContent = `[${ts}] [${mode}] Dispatched "${val}" -> Zigbee/WebAudio/AI Pipeline ACK (latency: ${Math.floor(Math.random()*9+2)}ms)\n` + log.textContent;
+}
+function speakRoast() {
+  const msg = "Warning! Procrastination detected on omarchy A.I. Shipping 10x chaos now!";
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
+  }
+  triggerChaos('VOICE-ROAST');
+}
+window.addEventListener('keydown', (e) => {
+  if (e.shiftKey && e.ctrlKey && e.altKey && e.key.toUpperCase() === 'D') {
+    const el = document.getElementById('secret-deck');
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  }
+});
+</script>
+</body>
+</html>
